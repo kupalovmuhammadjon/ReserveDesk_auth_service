@@ -1,0 +1,3 @@
+[submodule "ReserveDesk_protos"]
+	path = ReserveDesk_protos
+	url = git@github.com:kupalovmuhammadjon/ReserveDesk_protos.git
