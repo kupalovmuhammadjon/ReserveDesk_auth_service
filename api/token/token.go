@@ -50,14 +50,6 @@ func GenerateJWT(user *models.User) *pb.Tokens {
 	}
 }
 
-func ValidateToken(token string) (bool, error) {
-	_, err := ExtractClaims(token)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
-}
-
 func ExtractClaims(tokenStr string) (jwt.MapClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenStr, jwt.MapClaims{}, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {

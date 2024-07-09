@@ -17,13 +17,6 @@ func JWTMiddleware() gin.HandlerFunc {
 			})
 			return
 		}
-		valid, err := token.ValidateToken(auth)
-		if err != nil || !valid {
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error": "Invalid token",
-			})
-			return
-		}
 
 		claims, err := token.ExtractClaims(auth)
 		if err != nil {
