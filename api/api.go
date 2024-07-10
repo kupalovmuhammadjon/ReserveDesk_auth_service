@@ -1,19 +1,26 @@
 package api
 
 import (
+	"auth_service/api/handler"
+	"auth_service/api/middleware"
+	"database/sql"
+
 	"github.com/gin-gonic/gin"
 )
 
-func NewRouter() *gin.Engine {
+
+
+func NewRouter(db *sql.DB) *gin.Engine{
+	
+	h := handler.NewHendler(db)
+
 	router := gin.Default()
 
-	main := router.Group("/reservedesk.uz")
+	router.Use(middleware.JWTMiddleware())
 
-	users := main.Group("/users")
-
-	users.POST("/register")
-	users.POST("/login")
-	users.POST("/logout")
+	users := router.Group("/auth")
+	users.POST("/registor", h.Register)
+	users.POST("/login", h.Login)
 
 	return router
 }

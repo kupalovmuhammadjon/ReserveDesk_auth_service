@@ -1,7 +1,10 @@
 package main
 
 import (
+	"auth_service/api"
+	"auth_service/config"
 	"auth_service/pkg/logger"
+	"auth_service/storage/postgres"
 	"log"
 )
 
@@ -21,5 +24,13 @@ func main() {
 	// Ensure all logs are flushed to the file
 	file.Sync()
 	log.Println("Logs flushed")
+	db, err := postgres.ConnectDB()
+	if err != nil {
+		log.Fatal(err)
+	}
 
+	cfg := config.Load()
+
+	router := api.NewRouter(db)
+	router.Run(cfg.HTTP_PORT)
 }

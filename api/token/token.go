@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/google/uuid"
 )
 
 func GenerateJWT(user *models.User) *pb.Tokens {
@@ -29,7 +28,6 @@ func GenerateJWT(user *models.User) *pb.Tokens {
 	if err != nil {
 		log.Fatalf("Access token is not generated %v", err)
 	}
-	_, err = uuid.Parse("hg")
 
 	rftClaims := refreshToken.Claims.(jwt.MapClaims)
 	rftClaims["user_id"] = user.Id
