@@ -8,16 +8,16 @@ import (
 )
 
 func JWTMiddleware() gin.HandlerFunc {
+
 	return func(ctx *gin.Context) {
 		auth := ctx.GetHeader("Authorization")
 
 		if auth == "" {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error": "Authorization header is required",
+				"error": "Authorization header id required",
 			})
 			return
 		}
-
 		claims, err := token.ExtractClaims(auth)
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
@@ -25,7 +25,9 @@ func JWTMiddleware() gin.HandlerFunc {
 			})
 			return
 		}
+
 		ctx.Set("claims", claims)
 		ctx.Next()
+
 	}
 }
