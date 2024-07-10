@@ -3,6 +3,7 @@ package postgres
 import (
 	pb "auth_service/genproto/auth"
 	"auth_service/models"
+	"time"
 
 	"database/sql"
 	"errors"
@@ -39,7 +40,7 @@ func (us *AuthRepo) Register(user *pb.User)  (*pb.Void, error) {
 
 func (us *AuthRepo) Login(logreq *pb.UserLogin) (*models.User, error) {
 	user := models.User{}
-	query := `select email, password  from users where email = $1 and password = $2`
+	query := `select email, password  from users where email = $1 and password = $2 and revoked=false `
 	err := us.DB.QueryRow(query, logreq.Email, logreq.Password).Scan(&user.Id, &user.FullName,
 		user.IsAdmin, user.Email)
 	if err != nil {
@@ -52,7 +53,22 @@ func (us *AuthRepo) Login(logreq *pb.UserLogin) (*models.User, error) {
 	return &user, nil
 }
 
-// func (us *AuthRepo) Logout(id string) error {
-// 	err := us.DB.Exec("")
-// }
+func (us *AuthRepo) Logout(token string) error {
+	_, err := us.DB.Exec("update reflesh_tokens set deleted_at=$1 where token=$2", time.Now(), token)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (us *AuthRepo) ShowProfile(id string) (*pb.Profile, error) {
+	userP := pb.Profile{}
+	err := us.DB.QueryRow("select full_name, is_admin, email, created_at, updated_at from users where deleted_at is nul").Scan(
+							&userP.FullName, &userP.IsAdmin, &userP.Email, &userP.CreatedAt, &userP.UpdatedAt)
+	if err != nil {
+		return nil, err
+	}
+
+	return &userP, nil
+}
 
