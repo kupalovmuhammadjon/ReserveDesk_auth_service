@@ -1,7 +1,15 @@
 package handler
 
-import "auth_service/genproto/"
+import (
+	// pb "auth_service/genproto/auth"
+	"auth_service/storage/postgres"
+	"database/sql"
+)
 
-type Handler struct {
-	User *pb.U
+type Hendler struct {
+	Auth postgres.AuthRepo
+}
+
+func NewHendler(db *sql.DB) *Hendler {
+	return &Hendler{*postgres.NewAuthRepo(db)}
 }

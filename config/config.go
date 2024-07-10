@@ -24,7 +24,6 @@ func Load() *Config {
 	if err != nil {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
-
 	config := &Config{}
 
 	config.HTTP_PORT = cast.ToString(coalesce("HTTP_PORT", 8080))
@@ -32,9 +31,9 @@ func Load() *Config {
 	config.DB_HOST = cast.ToString(coalesce("DB_HOST", "localhost"))
 	config.DB_PORT = cast.ToString(coalesce("DB_PORT", 5432))
 	config.DB_USER = cast.ToString(coalesce("DB_USER", "postgres"))
-	config.DB_PASSWORD = cast.ToString(coalesce("DB_PASSWORD", "root"))
-	config.DB_NAME = cast.ToString(coalesce("DB_NAME", "user_management"))
-	config.SIGNING_KEY = cast.ToString(coalesce("SIGNING_KEY", "dfghjmhgfd"))
+	config.DB_PASSWORD = cast.ToString(coalesce("DB_PASSWORD", "dodi"))
+	config.DB_NAME = cast.ToString(coalesce("DB_NAME", "dodi"))
+	config.SIGNING_KEY = cast.ToString(coalesce("SIGNING_KEY", "1"))
 
 	return config
 }
