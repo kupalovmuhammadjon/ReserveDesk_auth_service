@@ -34,3 +34,16 @@ func (a *AuthStorage) Login(ctx context.Context, rep *pb.UserLogin) (*models.Use
 	}
 	return user, nil
 }
+
+func (a *AuthStorage) UpdateProfile(ctx context.Context,req *pb.User) (*pb.Void, error) {
+	return &pb.Void{}, nil
+}
+
+func (a *AuthStorage) DeleteProfile(ctx context.Context,req *pb.Id) (*pb.Void, error) {
+	return &pb.Void{}, nil
+}
+
+func (a *AuthStorage) ValidateUserId(ctx context.Context,req *pb.Id) (*pb.Exists, error) {
+	return &pb.Exists{Exists: false}, nil // keyin to`g'irliman
+}
+	

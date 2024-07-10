@@ -12,18 +12,21 @@ import (
 )
 
 func GenerateJWT(user *models.User) *pb.Tokens {
+
 	accessToken := jwt.New(jwt.SigningMethodHS256)
 	refreshToken := jwt.New(jwt.SigningMethodHS256)
 
 	claims := accessToken.Claims.(jwt.MapClaims)
 	claims["user_id"] = user.Id
-	claims["full_name"] = user.FullName
+	claims["fullname"] = user.FullName
 	claims["is_admin"] = user.IsAdmin
 	claims["email"] = user.Email
+	claims["password"] = user.Password
 	claims["iat"] = time.Now().Unix()
-	claims["exp"] = time.Now().Add(time.Hour).Unix()
+	claims["ext"] = time.Now().Add(time.Hour).Unix()
 
 	cfg := config.Load()
+
 	access, err := accessToken.SignedString([]byte(cfg.SIGNING_KEY))
 	if err != nil {
 		log.Fatalf("Access token is not generated %v", err)
@@ -31,13 +34,14 @@ func GenerateJWT(user *models.User) *pb.Tokens {
 
 	rftClaims := refreshToken.Claims.(jwt.MapClaims)
 	rftClaims["user_id"] = user.Id
-	rftClaims["full_name"] = user.FullName
+	rftClaims["fullname"] = user.FullName
 	rftClaims["is_admin"] = user.IsAdmin
 	rftClaims["email"] = user.Email
+	rftClaims["passowrd"] = user.Password
 	rftClaims["iat"] = time.Now().Unix()
-	rftClaims["exp"] = time.Now().Add(time.Hour * 24 * 7).Unix()
+	rftClaims["ext"] = time.Now().Add(time.Hour * 24 * 7).Unix()
 
-	refresh, err := accessToken.SignedString([]byte(cfg.SIGNING_KEY))
+	refresh, err := refreshToken.SignedString([]byte(cfg.SIGNING_KEY))
 	if err != nil {
 		log.Fatalf("Access token is not generated %v", err)
 	}
