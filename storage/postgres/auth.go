@@ -102,7 +102,8 @@ func (us *AuthRepo) Logout(token string) error {
 	return nil
 }
 
-func (us *AuthRepo) ShowProfile(id string) (*pb.Profile, error) {
+
+func (us *AuthRepo) ShowProfile(id *pb.Id) (*pb.Profile, error) {
 	userP := pb.Profile{}
 	err := us.DB.QueryRow("select full_name, is_admin, email, created_at, updated_at from users where deleted_at is nul").Scan(
 		&userP.FullName, &userP.IsAdmin, &userP.Email, &userP.CreatedAt, &userP.UpdatedAt)
