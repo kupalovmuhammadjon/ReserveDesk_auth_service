@@ -43,7 +43,13 @@ func (us *AuthRepo) Register(user *pb.User) (*pb.Void, error) {
 
 func (us *AuthRepo) Login(logreq *models.User) (*models.User, error) {
 	user := models.User{}
-	query := `select email, password  from users where email = $1 and password = $2 and revoked=false `
+	query := `
+	select 
+		email, password  
+	from 
+		users 
+	where 
+		email = $1 and password = $2 `
 	err := us.DB.QueryRow(query, logreq.Email, logreq.Password).Scan(&user.Id, &user.FullName,
 		user.IsAdmin, user.Email)
 	if err != nil {
@@ -105,7 +111,13 @@ func (us *AuthRepo) Logout(token *pb.Token) error {
 
 func (us *AuthRepo) ShowProfile(id *pb.Id) (*pb.Profile, error) {
 	userP := pb.Profile{}
-	err := us.DB.QueryRow("select full_name, is_admin, email, created_at, updated_at from users where deleted_at is nul").Scan(
+	err := us.DB.QueryRow(`
+	select 
+		full_name, is_admin, email, created_at, updated_at 
+	from 
+		users 
+	where 
+		deleted_at is null`).Scan(
 		&userP.FullName, &userP.IsAdmin, &userP.Email, &userP.CreatedAt, &userP.UpdatedAt)
 	if err != nil {
 		return nil, err

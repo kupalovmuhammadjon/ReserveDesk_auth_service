@@ -1,60 +1,125 @@
 basePath: /auth
+definitions:
+  auth.Tokens:
+    properties:
+      AccessToken:
+        type: string
+      RefreshToken:
+        type: string
+    type: object
+  auth.User:
+    properties:
+      email:
+        type: string
+      full_name:
+        type: string
+      id:
+        type: string
+      is_admin:
+        type: boolean
+      password:
+        type: string
+    type: object
+  models.Error:
+    properties:
+      error:
+        type: string
+    type: object
+  models.User:
+    properties:
+      email:
+        type: string
+      fullName:
+        type: string
+      id:
+        type: string
+      isAdmin:
+        type: boolean
+      password:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
-  description: This is a sample server.
+  description: ReserveDesk is program to book seats in restaurants order food before
+    arrival.
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: http://swagger.io/terms/
-  title: ReserveDesk
+  title: ReserveDesk API
   version: "1.0"
 paths:
   /login:
     post:
+      consumes:
+      - application/json
       description: checks the user and returns tokens
       operationId: login
+      parameters:
+      - description: User Information to log in
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
       produces:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Returns access and refresh tokens
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/auth.Tokens'
+        "401":
+          description: if Access token fails it will returns this
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Something went wrong in server
+          schema:
+            $ref: '#/definitions/models.Error'
       summary: Login user
       tags:
       - Auth
   /logout:
     post:
-      description: removes refresh token
+      consumes:
+      - application/json
+      description: removes refresh token gets token from header
       operationId: logout
       produces:
       - application/json
       responses:
         "200":
           description: OK
+        "500":
+          description: Something went wrong in server
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.Error'
       summary: log outs user
       tags:
-      - User
+      - Auth
   /register:
     post:
+      consumes:
+      - application/json
       description: Registers user
       operationId: register
+      parameters:
+      - description: User information to create it
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/auth.User'
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
+        "500":
+          description: Something went wrong in server
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.Error'
       summary: Register User
       tags:
       - Auth
