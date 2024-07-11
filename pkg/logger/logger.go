@@ -20,19 +20,19 @@ type PrettyHandler struct {
 	l *log.Logger
 }
 
-func New() (*slog.Logger, *os.File, error) {
+func New() (*slog.Logger, error) {
 	opts := &slog.HandlerOptions{
 		Level: slog.LevelDebug,
 	}
 
-	file, err := os.OpenFile("log.json", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	file, err := os.OpenFile("app.log", os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	logger := slog.New(slog.NewJSONHandler(file, opts))
 	log.Println("Logger initialized successfully")
-	return logger, file, nil
+	return logger, nil
 }
 
 func (h *PrettyHandler) Handle(ctx context.Context, r slog.Record) error {

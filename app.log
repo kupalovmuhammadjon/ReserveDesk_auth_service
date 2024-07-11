@@ -1,0 +1,9 @@
+{"time":"2024-07-11T09:10:06.974988292+05:00","level":"DEBUG","msg":"Debug message"}
+{"time":"2024-07-11T09:10:06.975078905+05:00","level":"INFO","msg":"Info message"}
+{"time":"2024-07-11T09:10:06.975085127+05:00","level":"ERROR","msg":"Error message"}
+{"time":"2024-07-11T09:10:22.068052293+05:00","level":"DEBUG","msg":"Debug message"}
+{"time":"2024-07-11T09:10:22.068161862+05:00","level":"INFO","msg":"Info message"}
+{"time":"2024-07-11T09:10:22.068411057+05:00","level":"ERROR","msg":"Error message"}
+{"time":"2024-07-11T09:12:08.264884253+05:00","level":"DEBUG","msg":"Debug message"}
+{"time":"2024-07-11T09:12:08.264924494+05:00","level":"INFO","msg":"Info message"}
+{"time":"2024-07-11T09:12:08.264929176+05:00","level":"ERROR","msg":"Error message"}
