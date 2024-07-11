@@ -35,6 +35,7 @@ func New() (*slog.Logger, error) {
 	return logger, nil
 }
 
+// paski qismi kerakmaydi
 func (h *PrettyHandler) Handle(ctx context.Context, r slog.Record) error {
 
 	level := r.Level.String() + ":"

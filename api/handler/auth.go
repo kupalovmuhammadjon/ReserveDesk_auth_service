@@ -59,6 +59,7 @@ func (h *Hendler) Login(c *gin.Context) {
 	if err != nil {
 		if err == sql.ErrNoRows {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "user does not exist"})
+			h.Logger.Error(err.Error())
 			return
 		} else {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
