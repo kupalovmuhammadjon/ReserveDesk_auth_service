@@ -6,6 +6,7 @@ import (
 	"auth_service/storage/postgres"
 	"context"
 	"database/sql"
+	"fmt"
 )
 
 type AuthStorage struct {
@@ -36,6 +37,7 @@ func (a *AuthStorage) Login(ctx context.Context, rep *pb.UserLogin) (*models.Use
 }
 
 func (a *AuthStorage) UpdateProfile(ctx context.Context,req *pb.User) (*pb.Void, error) {
+	
 	return &pb.Void{}, nil
 }
 
@@ -44,6 +46,24 @@ func (a *AuthStorage) DeleteProfile(ctx context.Context,req *pb.Id) (*pb.Void, e
 }
 
 func (a *AuthStorage) ValidateUserId(ctx context.Context,req *pb.Id) (*pb.Exists, error) {
-	return &pb.Exists{Exists: false}, nil // keyin to`g'irliman
+	exist, err := a.Repo.ValidateUserId(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if !exist.Exists {
+		return nil, fmt.Errorf("this id does not user")
+	}
+	return &pb.Exists{Exists: exist.Exists}, nil 
 }
+
+
+
+
+
+
+
+
+
+
 	

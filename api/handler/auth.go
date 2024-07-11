@@ -38,3 +38,5 @@ func (h *Hendler) Login(c *gin.Context) {
 
 	c.JSON(http.StatusOK, auth)
 }
+
+
