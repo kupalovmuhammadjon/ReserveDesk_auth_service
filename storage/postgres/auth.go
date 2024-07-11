@@ -41,7 +41,7 @@ func (us *AuthRepo) Register(user *pb.User) (*pb.Void, error) {
 	return &pb.Void{}, nil
 }
 
-func (us *AuthRepo) Login(logreq *pb.UserLogin) (*models.User, error) {
+func (us *AuthRepo) Login(logreq *models.User) (*models.User, error) {
 	user := models.User{}
 	query := `select email, password  from users where email = $1 and password = $2 and revoked=false `
 	err := us.DB.QueryRow(query, logreq.Email, logreq.Password).Scan(&user.Id, &user.FullName,

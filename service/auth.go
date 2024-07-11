@@ -2,6 +2,7 @@ package service
 
 import (
 	pb "auth_service/genproto/auth"
+	"auth_service/models"
 	"auth_service/storage/postgres"
 	"context"
 	"database/sql"
@@ -25,7 +26,7 @@ func (a *AuthStorage) Register(ctx context.Context, rep *pb.User) (*pb.Void, err
 	return &pb.Void{}, nil
 }
 
-func (a *AuthStorage) Login(ctx context.Context, rep *pb.UserLogin) (*pb.Token, error) {
+func (a *AuthStorage) Login(ctx context.Context, rep *models.User) (*pb.Token, error) {
 	_, err := a.Repo.Login(rep)
 	if err != nil {
 		return nil, err
