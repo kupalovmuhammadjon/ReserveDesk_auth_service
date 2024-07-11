@@ -7,3 +7,6 @@
 {"time":"2024-07-11T09:12:08.264884253+05:00","level":"DEBUG","msg":"Debug message"}
 {"time":"2024-07-11T09:12:08.264924494+05:00","level":"INFO","msg":"Info message"}
 {"time":"2024-07-11T09:12:08.264929176+05:00","level":"ERROR","msg":"Error message"}
+{"time":"2024-07-11T16:13:39.915857575+05:00","level":"DEBUG","msg":"Debug message"}
+{"time":"2024-07-11T16:13:39.915886871+05:00","level":"INFO","msg":"Info message"}
+{"time":"2024-07-11T16:13:39.915890425+05:00","level":"ERROR","msg":"Error message"}

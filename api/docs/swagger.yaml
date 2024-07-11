@@ -1,0 +1,61 @@
+basePath: /auth
+host: localhost:8080
+info:
+  contact: {}
+  description: This is a sample server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: ReserveDesk
+  version: "1.0"
+paths:
+  /login:
+    post:
+      description: checks the user and returns tokens
+      operationId: login
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Login user
+      tags:
+      - Auth
+  /logout:
+    post:
+      description: removes refresh token
+      operationId: logout
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: log outs user
+      tags:
+      - User
+  /register:
+    post:
+      description: Registers user
+      operationId: register
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Register User
+      tags:
+      - Auth
+swagger: "2.0"
