@@ -21,6 +21,7 @@ func NewRouter(db *sql.DB) *gin.Engine{
 	users := router.Group("/auth")
 	users.POST("/registor", h.Register)
 	users.POST("/login", h.Login)
+	users.POST("/logout", h.Logout)
 
 	return router
 }

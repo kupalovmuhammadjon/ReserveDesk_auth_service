@@ -41,7 +41,7 @@ func (us *AuthRepo) Register(user *pb.User) (*pb.Void, error) {
 	return &pb.Void{}, nil
 }
 
-func (us *AuthRepo) Login(logreq *pb.UserLogin) (*models.User, error) {
+func (us *AuthRepo) Login(logreq *models.User) (*models.User, error) {
 	user := models.User{}
 	query := `select email, password  from users where email = $1 and password = $2 and revoked=false `
 	err := us.DB.QueryRow(query, logreq.Email, logreq.Password).Scan(&user.Id, &user.FullName,
@@ -94,15 +94,16 @@ func (us *AuthRepo) ValidateUserId(rep *pb.Id) (*pb.Exists, error) {
 	err := us.DB.QueryRow(query, rep.Id).Scan(&res.Exists)
 	return &res, err
 }
-func (us *AuthRepo) Logout(token string) error {
-	_, err := us.DB.Exec("update reflesh_tokens set deleted_at=$1 where token=$2", time.Now(), token)
+func (us *AuthRepo) Logout(token *pb.Token) error {
+	_, err := us.DB.Exec("update reflesh_tokens set deleted_at=$1 where token=$2", time.Now(), token.Token)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (us *AuthRepo) ShowProfile(id string) (*pb.Profile, error) {
+
+func (us *AuthRepo) ShowProfile(id *pb.Id) (*pb.Profile, error) {
 	userP := pb.Profile{}
 	err := us.DB.QueryRow("select full_name, is_admin, email, created_at, updated_at from users where deleted_at is nul").Scan(
 		&userP.FullName, &userP.IsAdmin, &userP.Email, &userP.CreatedAt, &userP.UpdatedAt)
@@ -112,3 +113,5 @@ func (us *AuthRepo) ShowProfile(id string) (*pb.Profile, error) {
 
 	return &userP, nil
 }
+
+

@@ -13,5 +13,3 @@ type Hendler struct {
 func NewHendler(db *sql.DB) *Hendler {
 	return &Hendler{*postgres.NewAuthRepo(db)}
 }
-
-

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"auth_service/api/token"
+	"auth_service/models"
 	"net/http"
 
 	pb "auth_service/genproto/auth"
@@ -24,7 +25,7 @@ func (h *Hendler) Register(c *gin.Context) {
 }
 
 func (h *Hendler) Login(c *gin.Context) {
-	req := &pb.UserLogin{}
+	req := &models.User{}
 	if err := c.ShouldBindJSON(req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -38,3 +39,24 @@ func (h *Hendler) Login(c *gin.Context) {
 
 	c.JSON(http.StatusOK, auth)
 }
+
+func (h *Hendler) Logout(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+	
+	if len(token) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "token is empty",
+		})
+		return 
+	}
+
+	err := h.Auth.Logout(&pb.Token{Token: token})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+		return
+	}
+	c.JSON(http.StatusOK, nil)
+}
+
+
+
