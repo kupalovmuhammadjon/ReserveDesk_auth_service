@@ -39,4 +39,23 @@ func (h *Hendler) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, auth)
 }
 
+func (h *Hendler) Logout(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+	
+	if len(token) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "token is empty",
+		})
+		return 
+	}
+
+	err := h.Auth.Logout(&pb.Token{Token: token})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+		return
+	}
+	c.JSON(http.StatusOK, nil)
+}
+
+
 
