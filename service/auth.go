@@ -37,11 +37,18 @@ func (a *AuthStorage) Login(ctx context.Context, rep *pb.UserLogin) (*models.Use
 }
 
 func (a *AuthStorage) UpdateProfile(ctx context.Context,req *pb.User) (*pb.Void, error) {
-	
+	_, err := a.Repo.UpdateProfile(req)
+	if err != nil {
+		return nil, err
+	}	
 	return &pb.Void{}, nil
 }
 
 func (a *AuthStorage) DeleteProfile(ctx context.Context,req *pb.Id) (*pb.Void, error) {
+	_, err := a.Repo.DeleteProfile(req)
+	if err != nil {
+		return nil, err
+	}
 	return &pb.Void{}, nil
 }
 
@@ -56,6 +63,25 @@ func (a *AuthStorage) ValidateUserId(ctx context.Context,req *pb.Id) (*pb.Exists
 	}
 	return &pb.Exists{Exists: exist.Exists}, nil 
 }
+
+func (a *AuthStorage) ShowProfile(cnt context.Context, req *pb.Id) (*pb.Profile, error) {
+	userP, err := a.Repo.ShowProfile(req)
+	if err != nil {
+		return nil, err
+	}
+	return userP, nil
+}
+
+func (a *AuthStorage) Logout(ctx context.Context, req *pb.Token) (*pb.Void, error) {
+	err := a.Repo.Logout(req)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.Void{}, nil
+}
+
+
+
 
 
 

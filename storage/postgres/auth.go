@@ -94,7 +94,7 @@ func (us *AuthRepo) ValidateUserId(rep *pb.Id) (*pb.Exists, error) {
 	err := us.DB.QueryRow(query, rep.Id).Scan(&res.Exists)
 	return &res, err
 }
-func (us *AuthRepo) Logout(token string) error {
+func (us *AuthRepo) Logout(token *pb.Token) error {
 	_, err := us.DB.Exec("update reflesh_tokens set deleted_at=$1 where token=$2", time.Now(), token)
 	if err != nil {
 		return err
