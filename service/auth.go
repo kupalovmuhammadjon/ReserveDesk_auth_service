@@ -2,7 +2,6 @@ package service
 
 import (
 	pb "auth_service/genproto/auth"
-	"auth_service/models"
 	"auth_service/storage/postgres"
 	"context"
 	"database/sql"
@@ -18,21 +17,6 @@ func NewAuthStorage(db *sql.DB) *AuthStorage {
 	return &AuthStorage{Repo: postgres.NewAuthRepo(db)}
 }
 
-func (a *AuthStorage) Register(ctx context.Context, rep *pb.User) (*pb.Void, error) {
-	_, err := a.Repo.Register(rep)
-	if err != nil {
-		return &pb.Void{}, err
-	}
-	return &pb.Void{}, nil
-}
-
-func (a *AuthStorage) Login(ctx context.Context, rep *models.User) (*pb.Token, error) {
-	_, err := a.Repo.Login(rep)
-	if err != nil {
-		return nil, err
-	}
-	return &pb.Token{}, nil
-}
 
 func (a *AuthStorage) UpdateProfile(ctx context.Context, req *pb.User) (*pb.Void, error) {
 	_, err := a.Repo.UpdateProfile(req)
@@ -68,12 +52,4 @@ func (a *AuthStorage) ShowProfile(cnt context.Context, req *pb.Id) (*pb.Profile,
 		return nil, err
 	}
 	return userP, nil
-}
-
-func (a *AuthStorage) Logout(ctx context.Context, req *pb.Token) (*pb.Void, error) {
-	err := a.Repo.Logout(req)
-	if err != nil {
-		return nil, err
-	}
-	return &pb.Void{}, nil
 }

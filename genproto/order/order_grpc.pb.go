@@ -23,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OrderServiceClient interface {
 	CreateOrder(ctx context.Context, in *Order, opts ...grpc.CallOption) (*Void, error)
-	UpdateOrder(ctx context.Context, in *Order, opts ...grpc.CallOption) (*Void, error)
+	UpdateOrder(ctx context.Context, in *Updateorder, opts ...grpc.CallOption) (*Void, error)
 	DeleteOrder(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Void, error)
 	GetOrderById(ctx context.Context, in *Id, opts ...grpc.CallOption) (*OrderInfo, error)
 	GetAllOrder(ctx context.Context, in *OrderFilter, opts ...grpc.CallOption) (*Orders, error)
@@ -46,7 +46,7 @@ func (c *orderServiceClient) CreateOrder(ctx context.Context, in *Order, opts ..
 	return out, nil
 }
 
-func (c *orderServiceClient) UpdateOrder(ctx context.Context, in *Order, opts ...grpc.CallOption) (*Void, error) {
+func (c *orderServiceClient) UpdateOrder(ctx context.Context, in *Updateorder, opts ...grpc.CallOption) (*Void, error) {
 	out := new(Void)
 	err := c.cc.Invoke(ctx, "/order.OrderService/UpdateOrder", in, out, opts...)
 	if err != nil {
@@ -87,7 +87,7 @@ func (c *orderServiceClient) GetAllOrder(ctx context.Context, in *OrderFilter, o
 // for forward compatibility
 type OrderServiceServer interface {
 	CreateOrder(context.Context, *Order) (*Void, error)
-	UpdateOrder(context.Context, *Order) (*Void, error)
+	UpdateOrder(context.Context, *Updateorder) (*Void, error)
 	DeleteOrder(context.Context, *Id) (*Void, error)
 	GetOrderById(context.Context, *Id) (*OrderInfo, error)
 	GetAllOrder(context.Context, *OrderFilter) (*Orders, error)
@@ -101,7 +101,7 @@ type UnimplementedOrderServiceServer struct {
 func (UnimplementedOrderServiceServer) CreateOrder(context.Context, *Order) (*Void, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOrder not implemented")
 }
-func (UnimplementedOrderServiceServer) UpdateOrder(context.Context, *Order) (*Void, error) {
+func (UnimplementedOrderServiceServer) UpdateOrder(context.Context, *Updateorder) (*Void, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateOrder not implemented")
 }
 func (UnimplementedOrderServiceServer) DeleteOrder(context.Context, *Id) (*Void, error) {
@@ -145,7 +145,7 @@ func _OrderService_CreateOrder_Handler(srv interface{}, ctx context.Context, dec
 }
 
 func _OrderService_UpdateOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Order)
+	in := new(Updateorder)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -157,7 +157,7 @@ func _OrderService_UpdateOrder_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: "/order.OrderService/UpdateOrder",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrderServiceServer).UpdateOrder(ctx, req.(*Order))
+		return srv.(OrderServiceServer).UpdateOrder(ctx, req.(*Updateorder))
 	}
 	return interceptor(ctx, in, info, handler)
 }

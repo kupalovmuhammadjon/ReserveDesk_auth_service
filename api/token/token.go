@@ -41,7 +41,7 @@ func GenerateJWT(user *models.User) *pb.Tokens {
 	rftClaims["iat"] = time.Now().Unix()
 	rftClaims["ext"] = time.Now().Add(time.Hour * 24 * 7).Unix()
 
-	refresh, err := refreshToken.SignedString([]byte(cfg.SIGNING_KEY))
+	refresh, err := refreshToken.SignedString([]byte(cfg.REFRESH_SIGNING_KEY))
 	if err != nil {
 		log.Fatalf("Access token is not generated %v", err)
 	}
@@ -52,10 +52,36 @@ func GenerateJWT(user *models.User) *pb.Tokens {
 	}
 }
 
-func ExtractClaims(tokenStr string) (jwt.MapClaims, error) {
+func GenerateAccessToken(user *jwt.MapClaims) *string {
+
+	accessToken := jwt.New(jwt.SigningMethodHS256)
+
+	claims := accessToken.Claims.(jwt.MapClaims)
+	claims["user_id"] = (*user)["user_id"]
+	claims["full_name"] = (*user)["full_name"]
+	claims["is_admin"] = (*user)["is_admin"]
+	claims["email"] = (*user)["email"]
+	claims["password"] = (*user)["password"]
+	claims["iat"] = time.Now().Unix()
+	claims["ext"] = time.Now().Add(time.Hour).Unix()
+
+	cfg := config.Load()
+
+	access, err := accessToken.SignedString([]byte(cfg.SIGNING_KEY))
+	if err != nil {
+		log.Fatalf("Access token is not generated %v", err)
+	}
+
+	return &access
+}
+
+func ExtractClaims(tokenStr string, isRefresh bool) (jwt.MapClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenStr, jwt.MapClaims{}, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
+		}
+		if isRefresh{
+			return []byte(config.Load().REFRESH_SIGNING_KEY), nil
 		}
 		return []byte(config.Load().SIGNING_KEY), nil
 	})

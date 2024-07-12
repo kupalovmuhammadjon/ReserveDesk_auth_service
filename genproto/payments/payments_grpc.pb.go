@@ -27,7 +27,7 @@ type PaymentsClient interface {
 	UpdatePayment(ctx context.Context, in *Payment, opts ...grpc.CallOption) (*Void, error)
 	DeletePayment(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Void, error)
 	GetStatus(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Status, error)
-	ValidatePaymentId(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Status, error)
+	ValidatePaymentId(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Exists, error)
 }
 
 type paymentsClient struct {
@@ -83,8 +83,8 @@ func (c *paymentsClient) GetStatus(ctx context.Context, in *Id, opts ...grpc.Cal
 	return out, nil
 }
 
-func (c *paymentsClient) ValidatePaymentId(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Status, error) {
-	out := new(Status)
+func (c *paymentsClient) ValidatePaymentId(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Exists, error) {
+	out := new(Exists)
 	err := c.cc.Invoke(ctx, "/payments.Payments/ValidatePaymentId", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -101,7 +101,7 @@ type PaymentsServer interface {
 	UpdatePayment(context.Context, *Payment) (*Void, error)
 	DeletePayment(context.Context, *Id) (*Void, error)
 	GetStatus(context.Context, *Id) (*Status, error)
-	ValidatePaymentId(context.Context, *Id) (*Status, error)
+	ValidatePaymentId(context.Context, *Id) (*Exists, error)
 	mustEmbedUnimplementedPaymentsServer()
 }
 
@@ -124,7 +124,7 @@ func (UnimplementedPaymentsServer) DeletePayment(context.Context, *Id) (*Void, e
 func (UnimplementedPaymentsServer) GetStatus(context.Context, *Id) (*Status, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetStatus not implemented")
 }
-func (UnimplementedPaymentsServer) ValidatePaymentId(context.Context, *Id) (*Status, error) {
+func (UnimplementedPaymentsServer) ValidatePaymentId(context.Context, *Id) (*Exists, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ValidatePaymentId not implemented")
 }
 func (UnimplementedPaymentsServer) mustEmbedUnimplementedPaymentsServer() {}

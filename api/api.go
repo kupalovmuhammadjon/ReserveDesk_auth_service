@@ -19,6 +19,11 @@ import (
 // @host localhost:8080
 // @BasePath /auth
 
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+
 func NewRouter(db *sql.DB) *gin.Engine {
     h := handler.NewHendler(db)
 
@@ -30,6 +35,7 @@ func NewRouter(db *sql.DB) *gin.Engine {
     users.POST("/register", h.Register)
     users.POST("/login", h.Login)
     users.POST("/logout", h.Logout)
+    users.GET("/refreshtoken", h.RefreshToken)
 
     return router
 }

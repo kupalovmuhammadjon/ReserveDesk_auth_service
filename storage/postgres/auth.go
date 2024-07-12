@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"database/sql"
-	"errors"
 
 	"github.com/google/uuid"
 )
@@ -45,25 +44,66 @@ func (us *AuthRepo) Login(logreq *models.User) (*models.User, error) {
 	user := models.User{}
 	query := `
 	select 
-		email, password  
+		id, full_name, is_admin, email
 	from 
 		users 
 	where 
 		email = $1 and password = $2 `
 	err := us.DB.QueryRow(query, logreq.Email, logreq.Password).Scan(&user.Id, &user.FullName,
-		user.IsAdmin, user.Email)
+		&user.IsAdmin, &user.Email)
 	if err != nil {
 		return nil, err
-	}
-	if user.Password != logreq.Password || user.Email != logreq.Email {
-		return nil, errors.New("username or password incorrect")
 	}
 
 	return &user, nil
 }
 
+func (us *AuthRepo) Logout(token *pb.Tokens) error {
+	_, err := us.DB.Exec(`
+	update 
+		reflesh_tokens 
+	set 
+		deleted_at=$1 
+	where 
+		token=$2`, time.Now(), token.RefreshToken)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (us *AuthRepo) RefreshToken(refresh string) (bool, error) {
+	query := `
+	select 
+		case 
+			when token = $1 then true 
+		else 
+			false 
+		end 
+	from 
+		refresh_tokens 
+	where 
+		token = $1 and deletad_at is null
+	`
+	exists := false
+	err := us.DB.QueryRow(query, refresh).Scan(&exists)
+
+	return exists, err
+}
+
 func (us *AuthRepo) UpdateProfile(user *pb.User) (*pb.Void, error) {
-	_, err := us.DB.Exec("update users set full_name=$1, is_admin=$2, email=$3, password=$4, updated_at=$6 where id=$5", user.FullName, user.IsAdmin, user.Email, user.Password, user.Id, time.Now())
+	_, err := us.DB.Exec(`
+	update 
+		users 
+	set 
+		full_name=$1, 
+		is_admin=$2, 
+		email=$3, 
+		password=$4, 
+		updated_at=$6 
+	where 
+		id=$5`,
+		user.FullName, user.IsAdmin, user.Email, user.Password, user.Id, time.Now())
 	if err != nil {
 		return &pb.Void{}, err
 	}
@@ -100,14 +140,6 @@ func (us *AuthRepo) ValidateUserId(rep *pb.Id) (*pb.Exists, error) {
 	err := us.DB.QueryRow(query, rep.Id).Scan(&res.Exists)
 	return &res, err
 }
-func (us *AuthRepo) Logout(token *pb.Token) error {
-	_, err := us.DB.Exec("update reflesh_tokens set deleted_at=$1 where token=$2", time.Now(), token.Token)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 
 func (us *AuthRepo) ShowProfile(id *pb.Id) (*pb.Profile, error) {
 	userP := pb.Profile{}
@@ -125,5 +157,3 @@ func (us *AuthRepo) ShowProfile(id *pb.Id) (*pb.Profile, error) {
 
 	return &userP, nil
 }
-
-

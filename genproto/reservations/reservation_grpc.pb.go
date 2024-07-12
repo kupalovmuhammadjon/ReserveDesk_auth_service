@@ -22,13 +22,12 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ReservationServiceClient interface {
-	CreateReservation(ctx context.Context, in *ReservationRequest, opts ...grpc.CallOption) (*Void, error)
-	UpdateReservation(ctx context.Context, in *Reservation, opts ...grpc.CallOption) (*Void, error)
+	CreateReservation(ctx context.Context, in *Reservation, opts ...grpc.CallOption) (*Void, error)
+	UpdateReservation(ctx context.Context, in *ReservationUpdate, opts ...grpc.CallOption) (*Void, error)
 	DeleteReservation(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Void, error)
-	GetByIdReservation(ctx context.Context, in *Id, opts ...grpc.CallOption) (*ReservationInfo, error)
+	GetReservationById(ctx context.Context, in *Id, opts ...grpc.CallOption) (*ReservationInfo, error)
 	ValidateReservationId(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Exists, error)
 	GetAllReservations(ctx context.Context, in *ReservationFilter, opts ...grpc.CallOption) (*Reservations, error)
-	GetMenuOfRestaurant(ctx context.Context, in *Id, opts ...grpc.CallOption) (*MenuRespons, error)
 }
 
 type reservationServiceClient struct {
@@ -39,7 +38,7 @@ func NewReservationServiceClient(cc grpc.ClientConnInterface) ReservationService
 	return &reservationServiceClient{cc}
 }
 
-func (c *reservationServiceClient) CreateReservation(ctx context.Context, in *ReservationRequest, opts ...grpc.CallOption) (*Void, error) {
+func (c *reservationServiceClient) CreateReservation(ctx context.Context, in *Reservation, opts ...grpc.CallOption) (*Void, error) {
 	out := new(Void)
 	err := c.cc.Invoke(ctx, "/reservation.ReservationService/CreateReservation", in, out, opts...)
 	if err != nil {
@@ -48,7 +47,7 @@ func (c *reservationServiceClient) CreateReservation(ctx context.Context, in *Re
 	return out, nil
 }
 
-func (c *reservationServiceClient) UpdateReservation(ctx context.Context, in *Reservation, opts ...grpc.CallOption) (*Void, error) {
+func (c *reservationServiceClient) UpdateReservation(ctx context.Context, in *ReservationUpdate, opts ...grpc.CallOption) (*Void, error) {
 	out := new(Void)
 	err := c.cc.Invoke(ctx, "/reservation.ReservationService/UpdateReservation", in, out, opts...)
 	if err != nil {
@@ -66,9 +65,9 @@ func (c *reservationServiceClient) DeleteReservation(ctx context.Context, in *Id
 	return out, nil
 }
 
-func (c *reservationServiceClient) GetByIdReservation(ctx context.Context, in *Id, opts ...grpc.CallOption) (*ReservationInfo, error) {
+func (c *reservationServiceClient) GetReservationById(ctx context.Context, in *Id, opts ...grpc.CallOption) (*ReservationInfo, error) {
 	out := new(ReservationInfo)
-	err := c.cc.Invoke(ctx, "/reservation.ReservationService/GetByIdReservation", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/reservation.ReservationService/GetReservationById", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -93,26 +92,16 @@ func (c *reservationServiceClient) GetAllReservations(ctx context.Context, in *R
 	return out, nil
 }
 
-func (c *reservationServiceClient) GetMenuOfRestaurant(ctx context.Context, in *Id, opts ...grpc.CallOption) (*MenuRespons, error) {
-	out := new(MenuRespons)
-	err := c.cc.Invoke(ctx, "/reservation.ReservationService/GetMenuOfRestaurant", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // ReservationServiceServer is the server API for ReservationService service.
 // All implementations must embed UnimplementedReservationServiceServer
 // for forward compatibility
 type ReservationServiceServer interface {
-	CreateReservation(context.Context, *ReservationRequest) (*Void, error)
-	UpdateReservation(context.Context, *Reservation) (*Void, error)
+	CreateReservation(context.Context, *Reservation) (*Void, error)
+	UpdateReservation(context.Context, *ReservationUpdate) (*Void, error)
 	DeleteReservation(context.Context, *Id) (*Void, error)
-	GetByIdReservation(context.Context, *Id) (*ReservationInfo, error)
+	GetReservationById(context.Context, *Id) (*ReservationInfo, error)
 	ValidateReservationId(context.Context, *Id) (*Exists, error)
 	GetAllReservations(context.Context, *ReservationFilter) (*Reservations, error)
-	GetMenuOfRestaurant(context.Context, *Id) (*MenuRespons, error)
 	mustEmbedUnimplementedReservationServiceServer()
 }
 
@@ -120,26 +109,23 @@ type ReservationServiceServer interface {
 type UnimplementedReservationServiceServer struct {
 }
 
-func (UnimplementedReservationServiceServer) CreateReservation(context.Context, *ReservationRequest) (*Void, error) {
+func (UnimplementedReservationServiceServer) CreateReservation(context.Context, *Reservation) (*Void, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateReservation not implemented")
 }
-func (UnimplementedReservationServiceServer) UpdateReservation(context.Context, *Reservation) (*Void, error) {
+func (UnimplementedReservationServiceServer) UpdateReservation(context.Context, *ReservationUpdate) (*Void, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateReservation not implemented")
 }
 func (UnimplementedReservationServiceServer) DeleteReservation(context.Context, *Id) (*Void, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteReservation not implemented")
 }
-func (UnimplementedReservationServiceServer) GetByIdReservation(context.Context, *Id) (*ReservationInfo, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetByIdReservation not implemented")
+func (UnimplementedReservationServiceServer) GetReservationById(context.Context, *Id) (*ReservationInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetReservationById not implemented")
 }
 func (UnimplementedReservationServiceServer) ValidateReservationId(context.Context, *Id) (*Exists, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ValidateReservationId not implemented")
 }
 func (UnimplementedReservationServiceServer) GetAllReservations(context.Context, *ReservationFilter) (*Reservations, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllReservations not implemented")
-}
-func (UnimplementedReservationServiceServer) GetMenuOfRestaurant(context.Context, *Id) (*MenuRespons, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetMenuOfRestaurant not implemented")
 }
 func (UnimplementedReservationServiceServer) mustEmbedUnimplementedReservationServiceServer() {}
 
@@ -155,7 +141,7 @@ func RegisterReservationServiceServer(s grpc.ServiceRegistrar, srv ReservationSe
 }
 
 func _ReservationService_CreateReservation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ReservationRequest)
+	in := new(Reservation)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -167,13 +153,13 @@ func _ReservationService_CreateReservation_Handler(srv interface{}, ctx context.
 		FullMethod: "/reservation.ReservationService/CreateReservation",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ReservationServiceServer).CreateReservation(ctx, req.(*ReservationRequest))
+		return srv.(ReservationServiceServer).CreateReservation(ctx, req.(*Reservation))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _ReservationService_UpdateReservation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Reservation)
+	in := new(ReservationUpdate)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -185,7 +171,7 @@ func _ReservationService_UpdateReservation_Handler(srv interface{}, ctx context.
 		FullMethod: "/reservation.ReservationService/UpdateReservation",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ReservationServiceServer).UpdateReservation(ctx, req.(*Reservation))
+		return srv.(ReservationServiceServer).UpdateReservation(ctx, req.(*ReservationUpdate))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -208,20 +194,20 @@ func _ReservationService_DeleteReservation_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ReservationService_GetByIdReservation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ReservationService_GetReservationById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Id)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ReservationServiceServer).GetByIdReservation(ctx, in)
+		return srv.(ReservationServiceServer).GetReservationById(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/reservation.ReservationService/GetByIdReservation",
+		FullMethod: "/reservation.ReservationService/GetReservationById",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ReservationServiceServer).GetByIdReservation(ctx, req.(*Id))
+		return srv.(ReservationServiceServer).GetReservationById(ctx, req.(*Id))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -262,24 +248,6 @@ func _ReservationService_GetAllReservations_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ReservationService_GetMenuOfRestaurant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Id)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ReservationServiceServer).GetMenuOfRestaurant(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/reservation.ReservationService/GetMenuOfRestaurant",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ReservationServiceServer).GetMenuOfRestaurant(ctx, req.(*Id))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // ReservationService_ServiceDesc is the grpc.ServiceDesc for ReservationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -300,8 +268,8 @@ var ReservationService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ReservationService_DeleteReservation_Handler,
 		},
 		{
-			MethodName: "GetByIdReservation",
-			Handler:    _ReservationService_GetByIdReservation_Handler,
+			MethodName: "GetReservationById",
+			Handler:    _ReservationService_GetReservationById_Handler,
 		},
 		{
 			MethodName: "ValidateReservationId",
@@ -310,10 +278,6 @@ var ReservationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllReservations",
 			Handler:    _ReservationService_GetAllReservations_Handler,
-		},
-		{
-			MethodName: "GetMenuOfRestaurant",
-			Handler:    _ReservationService_GetMenuOfRestaurant_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

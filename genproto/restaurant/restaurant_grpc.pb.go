@@ -22,10 +22,10 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RestaurantClient interface {
-	CreateRestaurant(ctx context.Context, in *RestaurantInfo, opts ...grpc.CallOption) (*Void, error)
+	CreateRestaurant(ctx context.Context, in *RestaurantCreate, opts ...grpc.CallOption) (*Void, error)
 	GetRestaurants(ctx context.Context, in *RestaurantFilter, opts ...grpc.CallOption) (*Restaurants, error)
-	GetRestaurantById(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Restaurants, error)
-	UpdateRestaurant(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Void, error)
+	GetRestaurantById(ctx context.Context, in *Id, opts ...grpc.CallOption) (*RestaurantInfo, error)
+	UpdateRestaurant(ctx context.Context, in *RestaurantUpdate, opts ...grpc.CallOption) (*Void, error)
 	DeleteRestaurant(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Void, error)
 }
 
@@ -37,7 +37,7 @@ func NewRestaurantClient(cc grpc.ClientConnInterface) RestaurantClient {
 	return &restaurantClient{cc}
 }
 
-func (c *restaurantClient) CreateRestaurant(ctx context.Context, in *RestaurantInfo, opts ...grpc.CallOption) (*Void, error) {
+func (c *restaurantClient) CreateRestaurant(ctx context.Context, in *RestaurantCreate, opts ...grpc.CallOption) (*Void, error) {
 	out := new(Void)
 	err := c.cc.Invoke(ctx, "/restaurant.Restaurant/CreateRestaurant", in, out, opts...)
 	if err != nil {
@@ -55,8 +55,8 @@ func (c *restaurantClient) GetRestaurants(ctx context.Context, in *RestaurantFil
 	return out, nil
 }
 
-func (c *restaurantClient) GetRestaurantById(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Restaurants, error) {
-	out := new(Restaurants)
+func (c *restaurantClient) GetRestaurantById(ctx context.Context, in *Id, opts ...grpc.CallOption) (*RestaurantInfo, error) {
+	out := new(RestaurantInfo)
 	err := c.cc.Invoke(ctx, "/restaurant.Restaurant/GetRestaurantById", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -64,7 +64,7 @@ func (c *restaurantClient) GetRestaurantById(ctx context.Context, in *Id, opts .
 	return out, nil
 }
 
-func (c *restaurantClient) UpdateRestaurant(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Void, error) {
+func (c *restaurantClient) UpdateRestaurant(ctx context.Context, in *RestaurantUpdate, opts ...grpc.CallOption) (*Void, error) {
 	out := new(Void)
 	err := c.cc.Invoke(ctx, "/restaurant.Restaurant/UpdateRestaurant", in, out, opts...)
 	if err != nil {
@@ -86,10 +86,10 @@ func (c *restaurantClient) DeleteRestaurant(ctx context.Context, in *Id, opts ..
 // All implementations must embed UnimplementedRestaurantServer
 // for forward compatibility
 type RestaurantServer interface {
-	CreateRestaurant(context.Context, *RestaurantInfo) (*Void, error)
+	CreateRestaurant(context.Context, *RestaurantCreate) (*Void, error)
 	GetRestaurants(context.Context, *RestaurantFilter) (*Restaurants, error)
-	GetRestaurantById(context.Context, *Id) (*Restaurants, error)
-	UpdateRestaurant(context.Context, *Id) (*Void, error)
+	GetRestaurantById(context.Context, *Id) (*RestaurantInfo, error)
+	UpdateRestaurant(context.Context, *RestaurantUpdate) (*Void, error)
 	DeleteRestaurant(context.Context, *Id) (*Void, error)
 	mustEmbedUnimplementedRestaurantServer()
 }
@@ -98,16 +98,16 @@ type RestaurantServer interface {
 type UnimplementedRestaurantServer struct {
 }
 
-func (UnimplementedRestaurantServer) CreateRestaurant(context.Context, *RestaurantInfo) (*Void, error) {
+func (UnimplementedRestaurantServer) CreateRestaurant(context.Context, *RestaurantCreate) (*Void, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateRestaurant not implemented")
 }
 func (UnimplementedRestaurantServer) GetRestaurants(context.Context, *RestaurantFilter) (*Restaurants, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRestaurants not implemented")
 }
-func (UnimplementedRestaurantServer) GetRestaurantById(context.Context, *Id) (*Restaurants, error) {
+func (UnimplementedRestaurantServer) GetRestaurantById(context.Context, *Id) (*RestaurantInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRestaurantById not implemented")
 }
-func (UnimplementedRestaurantServer) UpdateRestaurant(context.Context, *Id) (*Void, error) {
+func (UnimplementedRestaurantServer) UpdateRestaurant(context.Context, *RestaurantUpdate) (*Void, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateRestaurant not implemented")
 }
 func (UnimplementedRestaurantServer) DeleteRestaurant(context.Context, *Id) (*Void, error) {
@@ -127,7 +127,7 @@ func RegisterRestaurantServer(s grpc.ServiceRegistrar, srv RestaurantServer) {
 }
 
 func _Restaurant_CreateRestaurant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RestaurantInfo)
+	in := new(RestaurantCreate)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -139,7 +139,7 @@ func _Restaurant_CreateRestaurant_Handler(srv interface{}, ctx context.Context, 
 		FullMethod: "/restaurant.Restaurant/CreateRestaurant",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RestaurantServer).CreateRestaurant(ctx, req.(*RestaurantInfo))
+		return srv.(RestaurantServer).CreateRestaurant(ctx, req.(*RestaurantCreate))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -181,7 +181,7 @@ func _Restaurant_GetRestaurantById_Handler(srv interface{}, ctx context.Context,
 }
 
 func _Restaurant_UpdateRestaurant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Id)
+	in := new(RestaurantUpdate)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -193,7 +193,7 @@ func _Restaurant_UpdateRestaurant_Handler(srv interface{}, ctx context.Context, 
 		FullMethod: "/restaurant.Restaurant/UpdateRestaurant",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RestaurantServer).UpdateRestaurant(ctx, req.(*Id))
+		return srv.(RestaurantServer).UpdateRestaurant(ctx, req.(*RestaurantUpdate))
 	}
 	return interceptor(ctx, in, info, handler)
 }

@@ -98,6 +98,22 @@ paths:
       summary: log outs user
       tags:
       - Auth
+  /refreshtoken:
+    get:
+      description: generates new access token gets token from header
+      operationId: refresh
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Something went wrong in server
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: refreshes token
+      tags:
+      - Auth
   /register:
     post:
       consumes:
@@ -123,4 +139,9 @@ paths:
       summary: Register User
       tags:
       - Auth
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

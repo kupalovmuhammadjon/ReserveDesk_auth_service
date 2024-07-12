@@ -9,14 +9,15 @@ import (
 )
 
 type Config struct {
-	HTTP_PORT         string
-	AUTH_SERVICE_PORT string
-	DB_HOST           string
-	DB_PORT           string
-	DB_USER           string
-	DB_PASSWORD       string
-	DB_NAME           string
-	SIGNING_KEY       string
+	HTTP_PORT           string
+	AUTH_SERVICE_PORT   string
+	DB_HOST             string
+	DB_PORT             string
+	DB_USER             string
+	DB_PASSWORD         string
+	DB_NAME             string
+	SIGNING_KEY         string
+	REFRESH_SIGNING_KEY string
 }
 
 func Load() *Config {
@@ -33,7 +34,8 @@ func Load() *Config {
 	config.DB_USER = cast.ToString(coalesce("DB_USER", "postgres"))
 	config.DB_PASSWORD = cast.ToString(coalesce("DB_PASSWORD", "dodi"))
 	config.DB_NAME = cast.ToString(coalesce("DB_NAME", "dodi"))
-	config.SIGNING_KEY = cast.ToString(coalesce("SIGNING_KEY", "1"))
+	config.SIGNING_KEY = cast.ToString(coalesce("SIGNING_KEY", "123"))
+	config.REFRESH_SIGNING_KEY = cast.ToString(coalesce("REFRESH_SIGNING_KEY", "234"))
 
 	return config
 }

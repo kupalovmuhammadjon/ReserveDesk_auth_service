@@ -93,6 +93,30 @@ const docTemplate = `{
                 }
             }
         },
+        "/refreshtoken": {
+            "get": {
+                "description": "generates new access token gets token from header",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "refreshes token",
+                "operationId": "refresh",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "500": {
+                        "description": "Something went wrong in server",
+                        "schema": {
+                            "$ref": "#/definitions/models.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/register": {
             "post": {
                 "description": "Registers user",
@@ -191,6 +215,13 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

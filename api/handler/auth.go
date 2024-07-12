@@ -82,19 +82,55 @@ func (h *Hendler) Login(c *gin.Context) {
 // @Failure 500 {object} models.Error "Something went wrong in server"
 // @Router /logout [post]
 func (h *Hendler) Logout(c *gin.Context) {
-	token := c.GetHeader("Authorization")
+	tkn := c.GetHeader("Authorization")
 
-	if len(token) == 0 {
+	_, err := token.ExtractClaims(tkn, true)
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "token is empty",
+			"error": "invalid token",
 		})
 		return
 	}
 
-	err := h.Auth.Logout(&pb.Token{Token: token})
+	err = h.Auth.Logout(&pb.Tokens{RefreshToken: tkn})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err)
 		return
 	}
 	c.JSON(http.StatusOK, nil)
+}
+
+// ReserveDesk
+// @Summary refreshes token
+// @Description generates new access token gets token from header
+// @Tags Auth
+// @ID refresh
+// @Produce json
+// @Success 200 
+// @Failure 500 {object} models.Error "Something went wrong in server"
+// @Router /refreshtoken [get]
+func (h *Hendler) RefreshToken(c *gin.Context){
+	refresh := c.GetHeader("Authorization")
+
+	claims, err := token.ExtractClaims(refresh, true)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid token",
+		})
+		return
+	}
+
+	exist, err := h.Auth.RefreshToken(refresh)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+		return
+	}
+	if !exist{
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "Refresh token doesnt exists",
+		})
+		return
+	}
+	access := token.GenerateAccessToken(&claims)
+	c.JSON(http.StatusOK, access)
 }
