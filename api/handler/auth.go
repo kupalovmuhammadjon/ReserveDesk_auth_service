@@ -27,11 +27,13 @@ func (h *Hendler) Register(c *gin.Context) {
 	req := &pb.User{}
 	if err := c.ShouldBindJSON(req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		h.Logger.Error(err.Error())
 		return
 	}
 	resp, err := h.Auth.Register(req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		h.Logger.Error(err.Error())
 		return
 	}
 	c.JSON(http.StatusCreated, resp)
@@ -53,6 +55,7 @@ func (h *Hendler) Login(c *gin.Context) {
 	req := &models.User{}
 	if err := c.ShouldBindJSON(req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		h.Logger.Error(err.Error())
 		return
 	}
 	resp, err := h.Auth.Login(req)
@@ -63,6 +66,7 @@ func (h *Hendler) Login(c *gin.Context) {
 			return
 		} else {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			h.Logger.Error(err.Error())
 			return
 		}
 	}
@@ -89,12 +93,14 @@ func (h *Hendler) Logout(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid token",
 		})
+		h.Logger.Error("invalid token ", err.Error())
 		return
 	}
 
 	err = h.Auth.Logout(&pb.Tokens{RefreshToken: tkn})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err)
+		h.Logger.Error(err.Error())
 		return
 	}
 	c.JSON(http.StatusOK, nil)
@@ -117,18 +123,21 @@ func (h *Hendler) RefreshToken(c *gin.Context){
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid token",
 		})
+		h.Logger.Error(err.Error())
 		return
 	}
 
 	exist, err := h.Auth.RefreshToken(refresh)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err)
+		h.Logger.Error(err.Error())
 		return
 	}
 	if !exist{
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": "Refresh token doesnt exists",
 		})
+		h.Logger.Error(err.Error())
 		return
 	}
 	access := token.GenerateAccessToken(&claims)
